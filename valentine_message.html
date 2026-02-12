@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Valentine's Day! ❤️</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Georgia', serif;
+            overflow: hidden;
+        }
+        
+        .valentine-container {
+            text-align: center;
+            color: white;
+            z-index: 10;
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .message {
+            font-size: 1.5rem;
+            margin: 30px 0;
+            max-width: 600px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .heart-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            animation: float-up 6s ease-in infinite;
+        }
+        
+        @keyframes float-up {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .signature {
+            font-size: 1.2rem;
+            margin-top: 50px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-container" id="heartContainer"></div>
+    
+    <div class="valentine-container">
+        <h1>❤️ Happy Valentine's Day! ❤️</h1>
+        <div class="message">
+            To the love of my life,<br><br>
+            You make every day brighter, every moment sweeter,<br>
+            and every challenge easier to face.<br><br>
+            Thank you for being my partner, my best friend,<br>
+            and my everything.<br><br>
+            I love you more than words can say! 💕
+        </div>
+        <div class="signature">
+            With all my love,<br>
+            Your Valentine 💖
+        </div>
+    </div>
+
+    <script>
+        // Create floating hearts
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            heart.style.animationDelay = Math.random() * 2 + 's';
+            
+            const container = document.getElementById('heartContainer');
+            container.appendChild(heart);
+            
+            // Remove heart after animation
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+        
+        // Create hearts periodically
+        setInterval(createHeart, 300);
+        
+        // Create initial hearts
+        for (let i = 0; i < 15; i++) {
+            setTimeout(createHeart, i * 200);
+        }
+    </script>
+</body>
+</html>

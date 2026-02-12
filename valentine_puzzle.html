@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Required</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .captcha-box {
+            border: 2px solid #d3d3d3;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+        
+        .checkbox {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #c1c1c1;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .checkbox.checked {
+            background: #4CAF50;
+            border-color: #4CAF50;
+        }
+        
+        .checkmark {
+            color: white;
+            font-size: 20px;
+            display: none;
+        }
+        
+        .checkbox.checked .checkmark {
+            display: block;
+        }
+        
+        .photo-challenge {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .photo-challenge.visible {
+            display: block;
+        }
+        
+        .challenge-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .photo-item {
+            aspect-ratio: 1;
+            background: #e0e0e0;
+            border: 3px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .photo-item.selected {
+            border-color: #4CAF50;
+        }
+        
+        .photo-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #4CAF50;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .verify-button {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .verify-button.visible {
+            display: block;
+        }
+        
+        .verify-button:hover {
+            background: #45a049;
+        }
+        
+        .verify-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="captcha-box">
+            <div class="checkbox-container" onclick="toggleCaptcha()">
+                <div class="checkbox" id="captchaCheck">
+                    <span class="checkmark">✓</span>
+                </div>
+                <span>I'm not a robot</span>
+            </div>
+        </div>
+        
+        <div class="photo-challenge" id="photoChallenge">
+            <div class="challenge-title">
+                <strong>Select all squares with your husband</strong>
+            </div>
+            <div class="photo-grid" id="photoGrid">
+                <!-- Photos will be inserted here -->
+            </div>
+            <button class="verify-button" id="verifyButton" onclick="verifySelection()">
+                Verify
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedPhotos = new Set();
+        const totalPhotos = 9;
+        
+        // Placeholder images - replace these URLs with actual photos
+        const photoUrls = [
+            'https://via.placeholder.com/200/FF6B6B/FFFFFF?text=Photo+1',
+            'https://via.placeholder.com/200/4ECDC4/FFFFFF?text=Photo+2',
+            'https://via.placeholder.com/200/45B7D1/FFFFFF?text=Photo+3',
+            'https://via.placeholder.com/200/96CEB4/FFFFFF?text=Photo+4',
+            'https://via.placeholder.com/200/FFEAA7/FFFFFF?text=Photo+5',
+            'https://via.placeholder.com/200/DFE6E9/FFFFFF?text=Photo+6',
+            'https://via.placeholder.com/200/74B9FF/FFFFFF?text=Photo+7',
+            'https://via.placeholder.com/200/A29BFE/FFFFFF?text=Photo+8',
+            'https://via.placeholder.com/200/FD79A8/FFFFFF?text=Photo+9'
+        ];
+        
+        function toggleCaptcha() {
+            const checkbox = document.getElementById('captchaCheck');
+            const challenge = document.getElementById('photoChallenge');
+            
+            if (!checkbox.classList.contains('checked')) {
+                checkbox.classList.add('checked');
+                setTimeout(() => {
+                    challenge.classList.add('visible');
+                    initializePhotoGrid();
+                }, 500);
+            }
+        }
+        
+        function initializePhotoGrid() {
+            const grid = document.getElementById('photoGrid');
+            grid.innerHTML = '';
+            
+            photoUrls.forEach((url, index) => {
+                const photoDiv = document.createElement('div');
+                photoDiv.className = 'photo-item';
+                photoDiv.onclick = () => togglePhoto(index);
+                
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = `Photo ${index + 1}`;
+                
+                photoDiv.appendChild(img);
+                grid.appendChild(photoDiv);
+            });
+        }
+        
+        function togglePhoto(index) {
+            const photos = document.querySelectorAll('.photo-item');
+            const photo = photos[index];
+            
+            if (selectedPhotos.has(index)) {
+                selectedPhotos.delete(index);
+                photo.classList.remove('selected');
+            } else {
+                selectedPhotos.add(index);
+                photo.classList.add('selected');
+            }
+            
+            // Show verify button when all photos are selected
+            const verifyButton = document.getElementById('verifyButton');
+            if (selectedPhotos.size === totalPhotos) {
+                verifyButton.classList.add('visible');
+            } else {
+                verifyButton.classList.remove('visible');
+            }
+        }
+        
+        function verifySelection() {
+            if (selectedPhotos.size === totalPhotos) {
+                // Redirect to Valentine's page
+                window.location.href = 'valentine_message.html';
+            }
+        }
+    </script>
+</body>
+</html>
